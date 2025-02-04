@@ -1,0 +1,228 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+* {
+  list-style-type: none;
+}
+body {
+  /* width: 100vw; */
+  height: 100vh;
+  font-family: "Poppins", serif;
+  font-weight: 500;
+  place-items: center;
+}
+
+p {
+  color: rgb(148, 147, 147);
+}
+
+.container {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 60%;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 20rem;
+}
+
+.acc {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+ul {
+  display: flex;
+  align-items: center;
+}
+a {
+  font-style: none;
+  text-decoration: none;
+  color: rgb(82, 81, 81);
+  font-size: 15px;
+}
+
+.bag {
+  width: 1rem;
+  height: 1rem;
+}
+
+.profile {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+}
+
+main {
+  display: flex;
+  gap: 1rem;
+  padding: 2rem;
+  justify-content: center;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(224, 236, 238);
+  padding-left: 4rem;
+  padding-right: 4rem;
+  padding-top: 1rem;
+  border-radius: 0.5rem;
+  height: fit-content;
+  padding-bottom: 1.5rem;
+  height: 40rem;
+}
+
+.current {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.line {
+  background-color: rgb(72, 91, 177);
+  width: 1.5rem;
+  height: 0.05rem;
+}
+
+.tick_lines {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account_details {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+}
+
+.icon {
+  width: 1rem;
+  position: relative;
+  right: -24rem;
+  top: -1.8rem;
+}
+
+label {
+  margin-bottom: 1rem;
+}
+
+input {
+  background-color: rgb(241, 240, 240);
+  border: none;
+  padding: 0.9rem;
+  border-radius: 0.5rem;
+}
+
+.action {
+  display: flex;
+  justify-self: end;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+button {
+  padding: 2rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: rgb(97, 97, 252);
+  color: white;
+}
+
+hr {
+  width: 100%;
+  height: 0.5px;
+  background-color: rgb(194, 193, 193);
+  border: none;
+}
+
+.order_action {
+  display: flex;
+  place-self: end;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.order_sec {
+  padding: 2rem;
+  padding-top: 0.5rem;
+}
+.item {
+  height: 12rem;
+  overflow: hidden;
+}
+
+.amount {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  height: 4rem;
+  justify-content: space-between;
+  padding: 1rem;
+  margin-bottom: -1rem;
+}
+
+.desc {
+  display: flex;
+  flex-direction: column;
+}
+
+.price {
+  margin-top: -1rem;
+}
+.quantity {
+  display: flex;
+  align-items: center;
+  height: fit-content;
+  height: 1rem;
+  gap: 1rem;
+}
+
+.adj {
+  background-color: rgb(197, 196, 196);
+  padding: 2px;
+}
+
+.order_sec button {
+  background-color: initial;
+  border: 2px solid rgb(105, 105, 231);
+  color: rgb(113, 113, 214);
+}
+
+.discount {
+  display: flex;
+  gap: 1rem;
+}
+
+.totals {
+  width: 90%;
+}
+.priceDesc {
+  display: flex;
+  justify-content: space-between;
+}

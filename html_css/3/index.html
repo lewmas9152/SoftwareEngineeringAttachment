@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <img src="./images/mobipt_logo.jpg" alt="logo" class="logo" />
+        <ul class="nav">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Shop</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Help</a></li>
+        </ul>
+
+        <ul class="account">
+          <li class="acc">
+            Account <img src="./images/gridicons--dropdown.svg" alt="expand" />
+          </li>
+          <li class="acc">
+            <img src="./images/ph--bag.svg" alt="" class="bag" />3 items
+          </li>
+          <li><img src="./images//profile.jpg" alt="" class="profile" /></li>
+        </ul>
+      </nav>
+      <hr>
+      <main>
+        <section class="left_card">
+          <div class="current">
+            <p style="color: rgb(35, 35, 226);">Account</p>
+            <div class="tick_lines">
+              <div class="line"></div>
+              <img src="./images/teenyicons--tick-circle-solid.svg" alt="" />
+              <div class="line"></div>
+            </div>
+            <p style="color: rgb(153, 151, 151);">Shipping</p>
+            <div class="tick_lines">
+              <div class="line"></div>
+              <img src="./images/teenyicons--tick-circle-solid.svg" alt="" />
+              <div class="line"></div>
+            </div>
+            <p style="color: rgb(153, 151, 151);">Payment</p>
+          </div>
+          <div class="account_details">
+            <h4>Account details</h4>
+            <form action="#">
+              <div class="input">
+                <label for="email">Email address</label>
+                <input type="email" id="email" />
+                <img
+                  src="./images/teenyicons--tick-circle-solid.svg"
+                  alt=""
+                  class="icon"
+                />
+              </div>
+              <div class="input">
+                <label for="Password">Password</label>
+                <input type="password" id="email" />
+                <img
+                  src="./images/teenyicons--tick-circle-solid.svg"
+                  alt=""
+                  class="icon"
+                />
+              </div>
+              <div class="action">
+                <a href="#">Register for account</a>
+                <button>Login</button>
+              </div>
+            </form>
+          </div>
+          <hr />
+          <div class="order_action">
+            <a href="#">Cancel order</a>
+            <button>Shipping details</button>
+          </div>
+        </section>
+
+        <section class="order_sec">
+          <h4>Order Summary</h4>
+          <div class="item">
+            <img src="./images/headset.jpg" alt="headset" />
+          </div>
+          
+          <div class="amount">
+            <div class="desc">
+                <p style="color: black;">Sony wireless headphones </p>
+                <p class="price" style="color: black; font-size:larger">€320.45</p>
+            </div>
+             
+            <span class="quantity">
+              <img src="./images/ic--outline-minus.svg" alt="minus" class="adj" />
+              <p>1</p>
+              <img src="./images/ic--outline-plus.svg" alt="Add"  class="adj"/>
+            </span>
+          </div>
+
+          <form action="#" >
+            <p>Gift Card/ Discount code</p>
+            <div class="discount">
+                <input type="text" id="coupon" />
+                <button>Apply</button>
+            </div>
+            
+          </form>
+
+          <div class="totals">
+            <span class="priceDesc">
+              <p>Sub total</p>
+              <p>€316.55</p>
+            </span>
+
+            <span class="priceDesc">
+              <p>Tax</p>
+              <p>€3.45</p>
+            </span>
+
+            <span class="priceDesc">
+              <p>Shipping</p>
+              <p style="color: rgb(52, 52, 190);">Free</p>
+            </span>
+
+            <span class="priceDesc">
+              <p style="color: black;">Total</p>
+              <p>€320.45</p>
+            </span>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
