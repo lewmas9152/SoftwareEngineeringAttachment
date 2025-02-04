@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+body {
+    background-color: #D9EFE5F3;
+    font-family: "Outfi", serif;
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+img {
+    width: 20px;
+}
+
+.google {
+    width: 70px;
+}
+
+.name {
+    font-size: 40px;
+    margin-bottom: -2px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 400px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    padding: 2rem;
+    padding-top: 6rem;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    left: -150px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(
+      circle,
+      rgba(59, 130, 246, 0.3) 10%,
+      rgba(59, 130, 246, 0.1) 30%,
+      rgba(59, 130, 246, 0) 70%
+    );
+    z-index: -1;
+    border-radius:50%;
+    }
+
+    .card::after {
+        content: '';
+        position: absolute;
+        bottom: 300px;
+        left: 150px;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle,
+          rgba(59, 130, 246, 0.3) 10%,
+          rgba(59, 130, 246, 0.1) 30%,
+          rgba(59, 130, 246, 0) 70%
+        );
+        z-index: 1;
+        border-radius:50%;
+        }
+
+.occupation {
+    display: flex;
+    gap: 0.5rem;
+    margin-top:0;
+    color: rgb(138, 137, 137);
+    align-items: center;
+}
+
+
+.socials {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+button {
+    margin-top: 4rem;
+    padding: 0.8rem;
+    border: none;
+    background-color: white;
+    border-radius: 3rem;
+    font-weight: 400;
+    font-size: 1rem;
+}
