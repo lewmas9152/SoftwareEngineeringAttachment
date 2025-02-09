@@ -1,0 +1,38 @@
+Question1
+ Adaptability 1. Can you tell me about a time when you had to learn a new technology or skill quickly, and how you went about doing so? 2. How do you approach working with people who have different work styles or communication preferences than you do?
+
+Situation:
+Late last year, my friends and I participated in a school hackathon. We joined late, which meant we only had two weeks to come up with an idea and build a solution. We chose the health theme and decided to create a mental health assistance website called MindHarmony.
+
+Task:
+I was assigned to design the backend alongside one of my group members. The challenge was that he wanted to use Django, a Python framework I had little to no experience with. Additionally, we had to create an API for the frontend team and deploy the project on a suitable platform.
+
+Action:
+To tackle the challenge, I immediately started learning Django by watching YouTube tutorials and reading the official documentation, focusing on the parts directly related to our project. My teammate was incredibly supportive and guided me through the process.
+
+We also researched deployment platforms and decided to use Heroku because it was the best fit for our project. Although we had prior experience with Vercel and Render, we quickly learned how to deploy on Heroku and completed the process in a day.
+
+Throughout the two weeks, I stayed organized, communicated regularly with my team, and ensured that the backend and API were functional and well-integrated with the frontend.
+
+Result:
+By the deadline, we had a working prototype of MindHarmony ready for presentation. Our team was proud of what we accomplished in such a short time, and the experience taught me how to quickly adapt to new technologies, collaborate effectively, and deliver under pressure
+
+question  2. 
+ How do you approach working with people who have different work styles or communication preferences than you do?
+
+ In any team, people have different ways of working and communicating, and I’ve learned that adaptability is key to effective collaboration. My approach involves three main strategies: understanding, adjusting, and balancing.
+
+Understanding Work and Communication Styles:
+Whenever I join a new team, I take time to observe how my teammates prefer to work and communicate. Some people prefer direct, structured communication (like scheduled meetings and task lists), while others thrive in a more flexible and informal setting. I usually ask clarifying questions early on to ensure we are aligned on expectations.
+
+Adjusting My Approach:
+I try to adapt to different styles to maintain smooth collaboration. For instance, in my hackathon experience with MindHarmony, my backend teammate preferred detailed documentation and structured planning, whereas I was used to a more iterative approach. To bridge this gap, I adjusted by documenting my work more thoroughly and using task management tools to stay aligned.
+
+Balancing Differences to Keep Productivity High:
+When working with diverse teams, I focus on ensuring that differences in work styles complement rather than clash. If someone is more detail-oriented while another is more big-picture focused, I try to facilitate a workflow where both strengths contribute to the project’s success. Open communication is key—I regularly check in with teammates to clarify misunderstandings and resolve any friction before it becomes an issue.
+
+Example of How I Applied This Approach:
+During MindHarmony, the frontend team preferred quick updates through a group chat, while the backend team relied more on scheduled discussions. To balance this, I ensured that we had structured updates in meetings while also being responsive in the chat for quick clarifications. This helped bridge the gap between both teams and kept everyone on the same page.
+
+Outcome:
+By staying adaptable and open-minded, I’ve been able to work effectively with people who have different work styles, ensuring smooth collaboration and project success.
