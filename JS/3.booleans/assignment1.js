@@ -4,7 +4,7 @@ const saltRounds = 10;
 const password = "password123";
 
 async function createUser() {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hashSync(password, saltRounds);
 
     return {
         "hashedPassword": hashedPassword,
@@ -15,7 +15,7 @@ async function createUser() {
 }
 
 const verifyPassword = async (inputPassword, storedHashedPassword) => {
-    return await bcrypt.compare(inputPassword, storedHashedPassword);
+    return await bcrypt.compareSync(inputPassword, storedHashedPassword);
 };
 
 const verifyMFA = (inputMfaCode, correctMfaCode) => {
