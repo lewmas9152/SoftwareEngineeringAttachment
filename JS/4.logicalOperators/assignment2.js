@@ -1,4 +1,4 @@
-// 1. Check if a string is a palindrome
+ // 1. Check if a string is a palindrome
 
 function isPalindrome(str) {
   let string = str
@@ -107,27 +107,25 @@ console.log(countPalindromes("a"));
 console.log(countPalindromes("abc"));
 
 //7 longest common prefix
-function longestCommonPrefix(arr) {
-  if (!arr.length) return "";
-
-  let prefix = arr[0];
-
-  for (let i = 1; i < arr.length; i++) {
-    while (arr[i].indexOf(prefix) !== 0) {
-      prefix = prefix.slice(0, -1);
-      if (!prefix) return "";
+const longestCommonPrefix = (array) => {
+  let str1 = array[0].split("");
+  let str2 = array[1].split("");
+  let str3 = array[2].split("");
+  let result = "";
+  for (let i = 0; i < str1.length; i++) {
+    if (str1[i] == str2[i] && str1[i] == str3[i]) {
+      result += str1[i];
     }
   }
-
-  return prefix;
-}
+  return result;
+};
 
 console.log(longestCommonPrefix(["flower", "flow", "flight"]));
 console.log(longestCommonPrefix(["dog", "racecar", "car"]));
 console.log(
   longestCommonPrefix(["interspecies", "interstellar", "interstate"])
 );
-console.log(longestCommonPrefix(["prefix", "prefixes", "preform"]));
+console.log(longestCommonPrefix(["prefixes", "preform", "prefix"]));
 console.log(longestCommonPrefix(["apple", "banana", "cherry"]));
 
 //8 case Insensitive Palindrome
@@ -142,3 +140,5 @@ console.log(isCaseInsensitivePalindrome("Racecar"));
 console.log(isCaseInsensitivePalindrome("Palindrome"));
 console.log(isCaseInsensitivePalindrome("Madam"));
 console.log(isCaseInsensitivePalindrome("Hello"));
+
+
