@@ -32,7 +32,7 @@ function handleNumber(event) {
 function handleOperator(event) {
   const clickedOperator = event.target.textContent;
 
-  if (clickedOperator === "C") {
+  if (clickedOperator === "C" || clickedOperator === "CE") {
     firstNum = "";
     secondNum = "";
     operator = "";
@@ -43,7 +43,14 @@ function handleOperator(event) {
 
   if (firstNum !== "") {
     operator = clickedOperator;
-    history.textContent = firstNum + " " + operator;
+    if (
+      operator == "+" ||
+      operator == "-" ||
+      operator == "x" ||
+      operator == "÷"
+    ) {
+      history.textContent = firstNum + " " + operator;
+    }
   }
 }
 
@@ -58,17 +65,25 @@ function calculate() {
         result = parseFloat(firstNum) - parseFloat(secondNum);
         break;
       case "x":
-        result = parseFloat(firstNum) * parseFloat(secondNum);
+        const multResult = parseFloat(firstNum) * parseFloat(secondNum);
+        result = Math.round(multResult * 1000) / 1000;
         break;
       case "÷":
-        result = parseFloat(firstNum) / parseFloat(secondNum);
+        const divisionResult = parseFloat(firstNum) / parseFloat(secondNum);
+        result = Math.round(divisionResult * 1000) / 1000;
         break;
       default:
         result = "Error";
     }
     display.textContent = result;
-    history.textContent = `${firstNum} ${operator} ${secondNum} =`;
-
+    if (
+      operator == "+" ||
+      operator == "-" ||
+      operator == "x" ||
+      operator == "÷"
+    ) {
+      history.textContent = `${firstNum} ${operator} ${secondNum} =`;
+    }
     firstNum = result.toString();
     secondNum = "";
     operator = "";
