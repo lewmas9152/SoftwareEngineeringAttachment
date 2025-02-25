@@ -1,32 +1,53 @@
+interface Book {
+  id: number;
+  title: string;
+  author: string;
+  description: string;
+  genre: string;
+  year: string;
+  pages: string;
+  price: number;
+  image: string;
+  publisher: string;
+}
+
+
+interface CartItem extends Book {
+  quantity: number;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-  const booksContainer = document.getElementById("books-container");
-  const genreFilter = document.getElementById("genre-filter");
-  const yearFilter = document.getElementById("year-filter");
-  const sortBy = document.getElementById("sort-by");
-  const applyFiltersBtn = document.getElementById("apply-filters");
-  const searchInput = document.querySelector(".search-bar input");
-  const loadingContainer = document.getElementById("loading-container");
-  const cartCountElement = document.querySelector(".cart-count");
-  const cartItemsContainer = document.querySelector(".cart-items");
-  const cartEmptyMessage = document.querySelector(".cart-empty-message");
-  const cartTotalItems = document.querySelector(".cart-total span:last-child");
+  // Type assertions for DOM elements
+  const booksContainer = document.getElementById("books-container") as HTMLDivElement;
+  const genreFilter = document.getElementById("genre-filter") as HTMLSelectElement;
+  const yearFilter = document.getElementById("year-filter") as HTMLSelectElement;
+  const sortBy = document.getElementById("sort-by") as HTMLSelectElement;
+  const applyFiltersBtn = document.getElementById("apply-filters") as HTMLButtonElement;
+  const searchInput = document.querySelector(".search-bar input") as HTMLInputElement;
+  const loadingContainer = document.getElementById("loading-container") as HTMLDivElement;
+  const cartCountElement = document.querySelector(".cart-count") as HTMLSpanElement;
+  const cartItemsContainer = document.querySelector(".cart-items") as HTMLDivElement;
+  const cartEmptyMessage = document.querySelector(".cart-empty-message") as HTMLDivElement;
+  const cartTotalItems = document.querySelector(".cart-total span:last-child") as HTMLSpanElement;
   const cartTotalPrice = document.createElement("div");
   cartTotalPrice.className = "cart-total";
   cartTotalPrice.innerHTML = "<span>Total Price:</span><span>$0.00</span>";
-  const checkoutBtn = document.querySelector(".checkout-btn");
-  const cartFooter = document.querySelector(".cart-footer");
+  const checkoutBtn = document.querySelector(".checkout-btn") as HTMLButtonElement;
+  const cartFooter = document.querySelector(".cart-footer") as HTMLDivElement;
 
   // Add the total price element to cart footer
   cartFooter.insertBefore(cartTotalPrice, checkoutBtn);
 
-  let cartItems = [];
-  let allBooks = [];
+  // Type annotations for arrays
+  let cartItems: CartItem[] = [];
+  let allBooks: Book[] = [];
 
-  async function fetchData() {
+  // Add return type to the function
+  async function fetchData(): Promise<Book[]> {
     try {
       loadingContainer.style.display = "flex";
-      const data = await fetch("http://localhost:3000/Books");
-      const dataJson = await data.json();
+      const data = await fetch("http://localhost:3001/Books");
+      const dataJson: Book[] = await data.json();
       loadingContainer.style.display = "none";
       return dataJson;
     } catch (error) {
@@ -37,10 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Initialize the app
-  fetchData().then((books) => {
+  fetchData().then((books: Book[]) => {
     allBooks = books;
     displayBooks(books);
-    console.log(allBooks)
     updateStats(books);
   });
 
@@ -50,13 +70,13 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Add event listener for search input
-  searchInput.addEventListener("keyup", function (event) {
+  searchInput.addEventListener("keyup", function (event: KeyboardEvent) {
     if (event.key === "Enter") {
       filterAndSortBooks();
     }
   });
 
-  function filterAndSortBooks() {
+  function filterAndSortBooks(): void {
     loadingContainer.style.display = "flex";
 
     const searchTerm = searchInput.value.toLowerCase().trim();
@@ -65,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const sortOption = sortBy.value;
 
     // Filter books
-    let filteredBooks = allBooks.filter((book) => {
+    let filteredBooks = allBooks.filter((book: Book) => {
       // Search filter
       const matchesSearch =
         searchTerm === "" ||
@@ -117,7 +137,8 @@ document.addEventListener("DOMContentLoaded", function () {
     loadingContainer.style.display = "none";
   }
 
-  function displayBooks(books) {
+  // Add parameter type annotation
+  function displayBooks(books: Book[]): void {
     booksContainer.innerHTML = "";
 
     if (books.length === 0) {
@@ -129,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    books.forEach((result) => {
+    books.forEach((result: Book) => {
       const bookCard = document.createElement("div");
       bookCard.className = "book-card";
 
@@ -191,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const bookId = document.createElement("p");
       bookId.className = "id-book";
-      bookId.textContent = result.id;
+      bookId.textContent = result.id.toString();
       bookId.style.display = "none";
 
       const buyBook = document.createElement("button");
@@ -199,10 +220,10 @@ document.addEventListener("DOMContentLoaded", function () {
       buyBook.textContent = `Buy Now • $${result.price.toFixed(2)}`;
 
       // Add to cart click handler
-      buyBook.addEventListener("click", function (e) {
+      buyBook.addEventListener("click", function (e: MouseEvent) {
         e.stopPropagation(); // Stop event from triggering book modal
-        const bookId =
-          e.target.parentNode.querySelector(".id-book").textContent;
+        const target = e.target as HTMLElement;
+        const bookId = target.parentNode!.querySelector(".id-book")!.textContent!;
         addToCart(bookId, books);
       });
 
@@ -225,13 +246,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  function updateStats(books) {
-    document.getElementById("total-books").textContent = books.length;
+  // Add parameter and return type annotations
+  function updateStats(books: Book[]): void {
+    const totalBooksElement = document.getElementById("total-books") as HTMLElement;
+    totalBooksElement.textContent = books.length.toString();
 
     if (books.length === 0) {
-      document.getElementById("avg-pages").textContent = "0";
-      document.getElementById("oldest-book").textContent = "N/A";
-      document.getElementById("genres-count").textContent = "0";
+      const avgPagesElement = document.getElementById("avg-pages") as HTMLElement;
+      const oldestBookElement = document.getElementById("oldest-book") as HTMLElement;
+      const genresCountElement = document.getElementById("genres-count") as HTMLElement;
+      
+      avgPagesElement.textContent = "0";
+      oldestBookElement.textContent = "N/A";
+      genresCountElement.textContent = "0";
       return;
     }
 
@@ -241,25 +268,35 @@ document.addEventListener("DOMContentLoaded", function () {
       0
     );
     const avgPages = Math.round(totalPages / books.length);
-    document.getElementById("avg-pages").textContent = avgPages;
+    const avgPagesElement = document.getElementById("avg-pages") as HTMLElement;
+    avgPagesElement.textContent = avgPages.toString();
 
     // Find oldest book
     const oldestYear = Math.min(...books.map((book) => parseInt(book.year)));
-    document.getElementById("oldest-book").textContent =
-      oldestYear < 0 ? `${Math.abs(oldestYear)} BCE` : oldestYear;
+    const oldestBookElement = document.getElementById("oldest-book") as HTMLElement;
+    oldestBookElement.textContent =
+      oldestYear < 0 ? `${Math.abs(oldestYear)} BCE` : oldestYear.toString();
 
     // Count unique genres
     const uniqueGenres = new Set(books.map((book) => book.genre));
-    document.getElementById("genres-count").textContent = uniqueGenres.size;
+    const genresCountElement = document.getElementById("genres-count") as HTMLElement;
+    genresCountElement.textContent = uniqueGenres.size.toString();
   }
+
+  // Add showBookModal function type signature
+  // This function wasn't implemented in the original code
+  function showBookModal(book: Book): void {
+    // Implementation would go here
+  }
+
   // Cart functionality
-  function addToCart(bookId, booksArray) {
-    const bookToAdd = booksArray.find((book) => book.id == bookId);
+  function addToCart(bookId: string, booksArray: Book[]): void {
+    const bookToAdd = booksArray.find((book) => book.id.toString() === bookId);
 
     if (!bookToAdd) return;
 
     // Check if book is already in cart
-    const existingItemIndex = cartItems.findIndex((item) => item.id == bookId);
+    const existingItemIndex = cartItems.findIndex((item) => item.id.toString() === bookId);
 
     if (existingItemIndex !== -1) {
       // Book already in cart, increment quantity
@@ -279,13 +316,13 @@ document.addEventListener("DOMContentLoaded", function () {
     showNotification(`Added "${bookToAdd.title}" to cart`);
   }
 
-  function updateCartUI() {
+  function updateCartUI(): void {
     // Update cart count
     const totalItems = cartItems.reduce(
       (total, item) => total + item.quantity,
       0
     );
-    cartCountElement.textContent = totalItems;
+    cartCountElement.textContent = totalItems.toString();
     cartTotalItems.textContent = `${totalItems} ${
       totalItems === 1 ? "book" : "books"
     }`;
@@ -296,15 +333,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 0);
 
     // Update total price display
-    cartTotalPrice.querySelector(
-      "span:last-child"
-    ).textContent = `$${totalPrice.toFixed(2)}`;
+    const priceElement = cartTotalPrice.querySelector("span:last-child") as HTMLElement;
+    priceElement.textContent = `$${totalPrice.toFixed(2)}`;
 
     // Update cart items display
     renderCartItems();
   }
 
-  function renderCartItems() {
+  function renderCartItems(): void {
     // Clear current cart items (except empty message)
     const itemElements = cartItemsContainer.querySelectorAll(".cart-item");
     itemElements.forEach((item) => item.remove());
@@ -362,12 +398,12 @@ document.addEventListener("DOMContentLoaded", function () {
     addCartItemEventListeners();
   }
 
-  function addCartItemEventListeners() {
+  function addCartItemEventListeners(): void {
     // Increment quantity
     const increaseButtons = document.querySelectorAll(".increase-quantity");
     increaseButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const id = this.getAttribute("data-id");
+      button.addEventListener("click", function (this: HTMLElement) {
+        const id = this.getAttribute("data-id")!;
         incrementCartItem(id);
       });
     });
@@ -375,8 +411,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Decrement quantity
     const decreaseButtons = document.querySelectorAll(".decrease-quantity");
     decreaseButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const id = this.getAttribute("data-id");
+      button.addEventListener("click", function (this: HTMLElement) {
+        const id = this.getAttribute("data-id")!;
         decrementCartItem(id);
       });
     });
@@ -384,23 +420,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Remove item
     const removeButtons = document.querySelectorAll(".remove-item");
     removeButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const id = this.getAttribute("data-id");
+      button.addEventListener("click", function (this: HTMLElement) {
+        const id = this.getAttribute("data-id")!;
         removeCartItem(id);
       });
     });
   }
 
-  function incrementCartItem(id) {
-    const itemIndex = cartItems.findIndex((item) => item.id == id);
+  function incrementCartItem(id: string): void {
+    const itemIndex = cartItems.findIndex((item) => item.id.toString() === id);
     if (itemIndex !== -1) {
       cartItems[itemIndex].quantity += 1;
       updateCartUI();
     }
   }
 
-  function decrementCartItem(id) {
-    const itemIndex = cartItems.findIndex((item) => item.id == id);
+  function decrementCartItem(id: string): void {
+    const itemIndex = cartItems.findIndex((item) => item.id.toString() === id);
     if (itemIndex !== -1) {
       if (cartItems[itemIndex].quantity > 1) {
         cartItems[itemIndex].quantity -= 1;
@@ -413,13 +449,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  function removeCartItem(id) {
-    cartItems = cartItems.filter((item) => item.id != id);
+  function removeCartItem(id: string): void {
+    cartItems = cartItems.filter((item) => item.id.toString() !== id);
     updateCartUI();
     showNotification("Item removed from cart");
   }
 
-  function showNotification(message) {
+  function showNotification(message: string): void {
     const notification = document.createElement("div");
     notification.className = "notification";
     notification.textContent = message;
@@ -459,10 +495,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Cart modal functionality
-  const cartButton = document.getElementById("cart-button");
-  const cartOverlay = document.getElementById("cart-overlay");
-  const cartModal = document.querySelector(".cart-modal");
-  const closeCart = document.getElementById("close-cart");
+  const cartButton = document.getElementById("cart-button") as HTMLButtonElement;
+  const cartOverlay = document.getElementById("cart-overlay") as HTMLDivElement;
+  const cartModal = document.querySelector(".cart-modal") as HTMLDivElement;
+  const closeCart = document.getElementById("close-cart") as HTMLElement;
 
   // Open cart modal
   cartButton.addEventListener("click", () => {
@@ -471,20 +507,20 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Close cart modal
-  const closeCartModal = () => {
+  const closeCartModal = (): void => {
     cartOverlay.classList.remove("active");
     cartModal.classList.remove("active");
   };
 
   closeCart.addEventListener("click", closeCartModal);
-  cartOverlay.addEventListener("click", (e) => {
+  cartOverlay.addEventListener("click", (e: MouseEvent) => {
     if (e.target === cartOverlay) {
       closeCartModal();
     }
   });
 
   // Close cart on escape key
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "Escape" && cartOverlay.classList.contains("active")) {
       closeCartModal();
     }

@@ -1,0 +1,23 @@
+{
+  "name": "1.booksts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --watch",
+    "serve": "vite",
+    "build": "tsc",
+    "preview": "vite preview",
+    "test": "vitest",
+    "start":"json-server --watch data.json --port 3000"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.1"
+  }
+}
