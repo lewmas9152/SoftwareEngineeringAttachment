@@ -1,0 +1,1 @@
+const message = Date.now() % 2 === 0 ? 'Hello Tuesdays!' : null
