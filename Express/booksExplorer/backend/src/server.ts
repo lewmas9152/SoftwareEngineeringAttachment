@@ -1,49 +1,28 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+}));
 
 const _dirname = path.resolve();
-const dataFilePath = path.join(_dirname, "src", "db", "data.json");
 
-// Helper functions for file operations
-const readBooksData = () => {
-  try {
-    const bookData = readFileSync(dataFilePath, "utf-8");
-    return JSON.parse(bookData);
-  } catch (error) {
-    console.error("Error reading books data:", error);
-    return { Books: [] };
-  }
-};
+const bookData = readFileSync(
+  path.join(_dirname, "src", "db", "data.json"),
+  "utf-8"
+);
 
-const writeBooksData = (data: any) => {
-  try {
-    writeFileSync(dataFilePath, JSON.stringify(data, null, 2), "utf-8");
-    return true;
-  } catch (error) {
-    console.error("Error writing books data:", error);
-    return false;
-  }
-};
+const books = JSON.parse(bookData).Books;
 
-// Get all books with filtering
 app.get('/api/books', (req: Request, res: Response) => {
   try {
-    const data = readBooksData();
-    const books = data.Books;
-    
     const { 
       search, 
       genre, 
@@ -128,129 +107,10 @@ app.get('/api/books', (req: Request, res: Response) => {
   }
 });
 
-// Get a single book by ID
-app.get('/api/books/:id', (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const data = readBooksData();
-    const book = data.Books.find((b: any) => b.id === id);
-    
-    if (!book) {
-      return res.status(404).json({ error: "Book not found" });
-    }
-    
-    res.json(book);
-  } catch (error) {
-    console.error("Error getting book:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Create a new book
-app.post('/api/books', (req: Request, res: Response) => {
-  try {
-    const { title, author, year, pages, genre, description, imageUrl } = req.body;
-    
-    // Validate required fields
-    if (!title || !author || !year || !pages || !genre) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-    
-    const data = readBooksData();
-    
-    const newBook = {
-      id: uuidv4(),
-      title,
-      author,
-      year: String(year),
-      pages: String(pages),
-      genre,
-      description: description || "",
-      imageUrl: imageUrl || ""
-    };
-    
-    data.Books.push(newBook);
-    
-    if (writeBooksData(data)) {
-      res.status(201).json(newBook);
-    } else {
-      res.status(500).json({ error: "Failed to save book" });
-    }
-  } catch (error) {
-    console.error("Error creating book:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Update a book
-app.put('/api/books/:id', (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const updates = req.body;
-    
-    const data = readBooksData();
-    const bookIndex = data.Books.findIndex((b: any) => b.id === id);
-    
-    if (bookIndex === -1) {
-      return res.status(404).json({ error: "Book not found" });
-    }
-    
-    // Update book properties
-    data.Books[bookIndex] = {
-      ...data.Books[bookIndex],
-      ...updates,
-      id // Ensure ID doesn't change
-    };
-    
-    // Convert year and pages to string if they're provided as numbers
-    if (updates.year) data.Books[bookIndex].year = String(updates.year);
-    if (updates.pages) data.Books[bookIndex].pages = String(updates.pages);
-    
-    if (writeBooksData(data)) {
-      res.json(data.Books[bookIndex]);
-    } else {
-      res.status(500).json({ error: "Failed to update book" });
-    }
-  } catch (error) {
-    console.error("Error updating book:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Delete a book
-app.delete('/api/books/:id', (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const data =   readBooksData();
-    const bookIndex = data.Books.findIndex((b: any) => b.id === id);
-    
-    if (bookIndex === -1) {
-      return res.status(404).json({ error: "Book not found" });
-    }
-    
-    const deletedBook = data.Books[bookIndex];
-    data.Books.splice(bookIndex, 1);
-    
-    if (writeBooksData(data)) {
-      res.json({ message: "Book deleted successfully", book: deletedBook });
-    } else {
-      res.status(500).json({ error: "Failed to delete book" });
-    }
-  } catch (error) {
-    console.error("Error deleting book:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Root route handler
 app.get('/', (req: Request, res: Response) => {
-  const data = readBooksData();
-  res.json({ message: "Books API - Use /api/books endpoint to access book data" });
+  res.json(books);
 });
 
-// Start the server
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
-
-export default app;
