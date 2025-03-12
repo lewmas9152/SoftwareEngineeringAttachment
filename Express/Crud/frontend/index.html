@@ -192,8 +192,7 @@
             <h2 class="modal-title">Edit Book</h2>
             
             <form id="edit-book-form">
-                <input type="hidden" id="edit-book-id">
-                
+                <input type="hidden" id="edit-book-id" name="id">
                 <div class="form-group">
                     <label for="edit-title">Title</label>
                     <input type="text" id="edit-title" name="title" required>
@@ -282,6 +281,11 @@
                     <div class="form-group">
                         <label for="add-pages">Pages</label>
                         <input type="number" id="add-pages" name="pages" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-price">Price</label>
+                        <input type="number" id="edit-price" name="price" step="0.01" required>
                     </div>
                 </div>
                 

@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function (){
   }
   
   interface Book { 
+    book_id?: string;
     id: string;
     title: string;
     author: string;
@@ -67,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function (){
 
       const response = await fetch(url);
       const data = await response.json();
+      console.log("Fetched books:", data);
       
       allBooks = data.books;
 
@@ -131,7 +133,10 @@ document.addEventListener("DOMContentLoaded", function (){
       return;
     }
     
-    books.forEach((result) => {
+    books.forEach((book) => {
+      // Log each book to help debug ID issues
+      console.log("Rendering book:", book.title, "ID:", book.id, "book_id:", book.book_id);
+      
       const bookCard = document.createElement("div");
       bookCard.className = "book-card";
       
@@ -140,32 +145,42 @@ document.addEventListener("DOMContentLoaded", function (){
       
       const image = document.createElement("img");
       image.className = "image";
-      image.src = result.image;
-      image.alt = result.title;
+      image.src = book.image;
+      image.alt = book.title;
       
       const bookCategory = document.createElement("div");
       bookCategory.className = "book-category";
-      bookCategory.textContent = result.genre;
+      bookCategory.textContent = book.genre;
       
       const bookActions = document.createElement("div");
       bookActions.className = "book-actions";
       
+      // IMPORTANT CHANGE: Use the same ID field for all operations (prefer book.id, fallback to book.book_id)
+      const bookId = book.id || book.book_id;
+
+      if (!bookId) {
+        console.error("Book ID is missing for book:", book.title);
+        return; // Skip creating buttons if no ID is available
+      }
+      
       const editBtn = document.createElement("button");
       editBtn.className = "action-btn edit-btn";
-      editBtn.setAttribute("data-id", result.id);
+      editBtn.setAttribute("data-id", bookId);
       editBtn.innerHTML = '<i class="fa fa-pencil" aria-hidden="true"></i>';
       editBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        openEditModal(result);
+        openEditModal(book);
       });
       
       const deleteBtn = document.createElement("button");
       deleteBtn.className = "action-btn delete-btn";
-      deleteBtn.setAttribute("data-id", result.id);
+      deleteBtn.setAttribute("data-id", bookId);
       deleteBtn.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
       deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        openDeleteModal(result.id);
+        // Log the ID being passed to delete modal
+        console.log("Opening delete modal for book:", book.title, "with ID:", bookId);
+        openDeleteModal(bookId);
       });
       
       bookActions.appendChild(editBtn);
@@ -180,26 +195,26 @@ document.addEventListener("DOMContentLoaded", function (){
       
       const bookTitle = document.createElement("h3");
       bookTitle.className = "book-title";
-      bookTitle.textContent = result.title;
+      bookTitle.textContent = book.title;
       
       const bookAuthor = document.createElement("p");
       bookAuthor.className = "book-author";
-      bookAuthor.textContent = result.author;
+      bookAuthor.textContent = book.author;
       
       const bookMeta = document.createElement("div");
       bookMeta.className = "book-meta";
       
       const year = document.createElement("span");
       year.id = "year";
-      year.textContent = result.year;
+      year.textContent = book.year;
       
       const pages = document.createElement("span");
       pages.id = "pages";
-      pages.textContent = `${result.pages} pages`;
+      pages.textContent = `${book.pages} pages`;
       
       const price = document.createElement("span");
       price.id = "price";
-      price.textContent = `$${Number(result.price).toFixed(2)}`;
+      price.textContent = `$${Number(book.price).toFixed(2)}`;
       price.style.color = "var(--primary)";
       price.style.fontWeight = "bold";
       
@@ -209,20 +224,20 @@ document.addEventListener("DOMContentLoaded", function (){
       
       const description = document.createElement("p");
       description.className = "book-description";
-      description.textContent = result.description;
+      description.textContent = book.description;
       
       const bookPublisher = document.createElement("p");
       bookPublisher.className = "book-publisher";
-      bookPublisher.textContent = result.publisher;
+      bookPublisher.textContent = book.publisher;
     
-      const bookId = document.createElement("p");
-      bookId.className = 'id-book';
-      bookId.textContent = result.id;
-      bookId.style.display = 'none';
+      const bookIdElement = document.createElement("p");
+      bookIdElement.className = 'id-book';
+      bookIdElement.textContent = bookId;
+      bookIdElement.style.display = 'none';
     
       const buyBook = document.createElement("button");
       buyBook.className = "buy-book";
-      buyBook.textContent = `Buy Now • $${Number(result.price).toFixed(2)}`;
+      buyBook.textContent = `Buy Now • $${Number(book.price).toFixed(2)}`;
       
       buyBook.addEventListener('click', function(e) {
         e.stopPropagation();
@@ -242,14 +257,14 @@ document.addEventListener("DOMContentLoaded", function (){
       bookInfo.appendChild(bookMeta);
       bookInfo.appendChild(description);
       bookInfo.appendChild(bookPublisher);
-      bookInfo.appendChild(bookId);
+      bookInfo.appendChild(bookIdElement);
       bookInfo.appendChild(buyBook);
       
       bookCard.appendChild(bookImage);
       bookCard.appendChild(bookInfo);
       
       bookCard.addEventListener('click', () => {
-        showBookModal(result);
+        showBookModal(book);
       });
       
       if (booksContainer) booksContainer.appendChild(bookCard);
@@ -285,11 +300,14 @@ document.addEventListener("DOMContentLoaded", function (){
   }
   
   function addToCart(bookId: string, booksArray: Book[]) {
-    const bookToAdd = booksArray.find((book: Book) => book.id === bookId);
+    const bookToAdd = booksArray.find((book: Book) => book.id === bookId || book.book_id === bookId);
     
-    if (!bookToAdd) return;
+    if (!bookToAdd) {
+      console.error("Could not find book with ID:", bookId);
+      return;
+    }
     
-    const existingItemIndex = cartItems.findIndex(item => item.id === bookId);
+    const existingItemIndex = cartItems.findIndex(item => item.id === bookId || item.book_id === bookId);
     
     if (existingItemIndex !== -1) {
       cartItems[existingItemIndex].quantity += 1;
@@ -346,6 +364,9 @@ document.addEventListener("DOMContentLoaded", function (){
       const cartItem = document.createElement('div');
       cartItem.className = 'cart-item';
       
+      // Use consistent ID approach
+      const itemId = item.id || item.book_id;
+      
       cartItem.innerHTML = `
         <div class="cart-item-image">
           <img src="${item.image}" alt="${item.title}">
@@ -356,16 +377,16 @@ document.addEventListener("DOMContentLoaded", function (){
           <p class="cart-item-price">$${item.price.toFixed(2)} each</p>
           <div class="cart-item-controls">
             <div class="quantity-controls">
-              <button class="quantity-btn decrease-quantity" data-id="${item.id}">
+              <button class="quantity-btn decrease-quantity" data-id="${itemId}">
                 <i class="fa fa-minus" aria-hidden="true"></i>
               </button>
               <span class="quantity">${item.quantity}</span>
-              <button class="quantity-btn btn2 increase-quantity" data-id="${item.id}">
+              <button class="quantity-btn btn2 increase-quantity" data-id="${itemId}">
                 <i class="fa fa-plus" aria-hidden="true"></i>
               </button>
             </div>
             <span class="item-total">$${(item.price * item.quantity).toFixed(2)}</span>
-            <button class="remove-item" data-id="${item.id}">
+            <button class="remove-item" data-id="${itemId}">
               <i class="fa fa-trash" aria-hidden="true"></i>
               Remove
             </button>
@@ -411,7 +432,7 @@ document.addEventListener("DOMContentLoaded", function (){
   }
   
   function incrementCartItem(id: string) {
-    const itemIndex = cartItems.findIndex(item => item.id === id);
+    const itemIndex = cartItems.findIndex(item => item.id === id || item.book_id === id);
     if (itemIndex !== -1) {
       cartItems[itemIndex].quantity += 1;
       updateCartUI();
@@ -419,7 +440,7 @@ document.addEventListener("DOMContentLoaded", function (){
   }
   
   function decrementCartItem(id: string) {
-    const itemIndex = cartItems.findIndex(item => item.id === id);
+    const itemIndex = cartItems.findIndex(item => item.id === id || item.book_id === id);
     if (itemIndex !== -1) {
       if (cartItems[itemIndex].quantity > 1) {
         cartItems[itemIndex].quantity -= 1;
@@ -432,7 +453,7 @@ document.addEventListener("DOMContentLoaded", function (){
   }
   
   function removeCartItem(id: string) {
-    cartItems = cartItems.filter(item => item.id !== id);
+    cartItems = cartItems.filter(item => item.id !== id && item.book_id !== id);
     updateCartUI();
     showNotification("Item removed from cart");
   }
@@ -473,21 +494,21 @@ document.addEventListener("DOMContentLoaded", function (){
     }, 3000);
   }
   
-  function showBookModal(result: Book) {
+  function showBookModal(book: Book) {
     const modal = document.createElement('div');
     modal.className = 'book-modal';
     modal.innerHTML = `
       <div class="modal-content">
         <span class="close-button">&times;</span>
-        <h2>${result.title}</h2>
-        <p><strong>Author:</strong> ${result.author}</p>
-        <p><strong>Genre:</strong> ${result.genre}</p>
-        <p><strong>Year:</strong> ${result.year}</p>
-        <p><strong>Pages:</strong> ${result.pages}</p>
-        <p><strong>Price:</strong> $${result.price.toFixed(2)}</p>
-        <p><strong>Description:</strong> ${result.description}</p>
-        <p><strong>Publisher:</strong> ${result.publisher}</p>
-        <img src="${result.image}" alt="${result.title}">
+        <h2>${book.title}</h2>
+        <p><strong>Author:</strong> ${book.author}</p>
+        <p><strong>Genre:</strong> ${book.genre}</p>
+        <p><strong>Year:</strong> ${book.year}</p>
+        <p><strong>Pages:</strong> ${book.pages}</p>
+        <p><strong>Price:</strong> $${book.price.toFixed(2)}</p>
+        <p><strong>Description:</strong> ${book.description}</p>
+        <p><strong>Publisher:</strong> ${book.publisher}</p>
+        <img src="${book.image}" alt="${book.title}">
       </div>
     `;
   
@@ -580,10 +601,25 @@ document.addEventListener("DOMContentLoaded", function (){
   
   // Edit Book Modal
   function openEditModal(book: Book) {
-    if (editModalOverlay) {
+    if (editModalOverlay && book) {
       editModalOverlay.classList.add('active');
       
-      const editBookId = document.getElementById('edit-book-id') as HTMLInputElement;
+      // Get the correct ID field (either book_id or id)
+      const bookId = book.id || book.book_id;
+
+      if (!bookId) {
+        console.error("Book ID is missing for book:", book.title);
+        return; // Skip creating buttons if no ID is available
+      }
+      
+      // Debug log to verify we have a valid book ID
+      console.log("Opening edit modal for book:", book.title, "with ID:", bookId);
+      
+      // Store the book ID directly in a data attribute on the form itself
+      if (editBookForm) {
+        editBookForm.setAttribute('data-book-id', bookId);
+      }
+      
       const editTitle = document.getElementById('edit-title') as HTMLInputElement;
       const editAuthor = document.getElementById('edit-author') as HTMLInputElement;
       const editYear = document.getElementById('edit-year') as HTMLInputElement;
@@ -592,8 +628,8 @@ document.addEventListener("DOMContentLoaded", function (){
       const editDescription = document.getElementById('edit-description') as HTMLTextAreaElement;
       const editPublisher = document.getElementById('edit-publisher') as HTMLInputElement;
       const editImage = document.getElementById('edit-image') as HTMLInputElement;
+      const editPrice = document.getElementById('edit-price') as HTMLInputElement;
       
-      if (editBookId) editBookId.value = book.id;
       if (editTitle) editTitle.value = book.title;
       if (editAuthor) editAuthor.value = book.author;
       if (editYear) editYear.value = book.year;
@@ -602,6 +638,7 @@ document.addEventListener("DOMContentLoaded", function (){
       if (editDescription) editDescription.value = book.description;
       if (editPublisher) editPublisher.value = book.publisher;
       if (editImage) editImage.value = book.image;
+      if (editPrice) editPrice.value = book.price.toString();
     }
   }
   
@@ -622,6 +659,7 @@ document.addEventListener("DOMContentLoaded", function (){
     if (deleteModalOverlay) {
       deleteModalOverlay.classList.add('active');
       currentBookIdToDelete = bookId;
+      console.log("Delete modal opened for book ID:", bookId);
     }
   }
   
@@ -662,7 +700,9 @@ document.addEventListener("DOMContentLoaded", function (){
           loadingContainer.style.display = "flex";
         }
         
-        const response = await fetch('http://localhost:5000/api/books', {
+        console.log("Sending book data to server:", bookData);
+        
+        const response = await fetch('http://localhost:5500/api/books', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -670,8 +710,11 @@ document.addEventListener("DOMContentLoaded", function (){
           body: JSON.stringify(bookData),
         });
         
+        const responseData = await response.json().catch(() => null);
+        console.log("Server response for book creation:", responseData);
+        
         if (!response.ok) {
-          throw new Error('Failed to add book');
+          throw new Error(`Failed to add book: ${response.status} ${response.statusText}`);
         }
         
         // Close modal and refresh books
@@ -701,22 +744,38 @@ document.addEventListener("DOMContentLoaded", function (){
     editBookForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      // Get the book ID from the data attribute we set on the form
+      const bookId = editBookForm.getAttribute('data-book-id');
+      
+      // Debug log to check the ID before submission
+      console.log("Submitting edit form for book ID:", bookId);
+      
+      // Add validation for bookId
+      if (!bookId) {
+        console.error("Book ID is missing or undefined");
+        showNotification('Cannot update book: Book ID is missing');
+        return; // Exit early if no bookId
+      }
+      
       const formData = new FormData(editBookForm);
       const bookData: Record<string, string> = {};
-      const bookId = (document.getElementById('edit-book-id') as HTMLInputElement).value;
       
       formData.forEach((value, key) => {
-        if (key !== 'id') {
+        // Make sure we're not including any ID fields in the data
+        if (key !== 'id' && key !== 'book_id' && key !== 'edit-book-id') {
           bookData[key] = value as string;
         }
       });
+      
+      // Log form data for debugging
+      console.log("Form data to be sent for update:", bookData);
       
       try {
         if (loadingContainer) {
           loadingContainer.style.display = "flex";
         }
         
-        const response = await fetch(`http://localhost:5000/api/books/${bookId}`, {
+        const response = await fetch(`http://localhost:5500/api/books/${bookId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -724,8 +783,11 @@ document.addEventListener("DOMContentLoaded", function (){
           body: JSON.stringify(bookData),
         });
         
+        const responseData = await response.json().catch(() => null);
+        console.log("Server response for book update:", responseData);
+        
         if (!response.ok) {
-          throw new Error('Failed to update book');
+          throw new Error(`Failed to update book: ${response.status} ${response.statusText}`);
         }
         
         // Close modal and refresh books
@@ -733,11 +795,9 @@ document.addEventListener("DOMContentLoaded", function (){
           editModalOverlay.classList.remove('active');
         }
         
-        // Refresh book list
-        fetchBooks().then(({ books, stats }) => {
-          displayBooks(books);
-          updateStats(stats);
-        });
+        const {books, stats} = await fetchBooks();
+        displayBooks(books);
+        updateStats(stats);
         
         showNotification('Book updated successfully!');
       } catch (error) {
@@ -753,19 +813,31 @@ document.addEventListener("DOMContentLoaded", function (){
   
   if (confirmDeleteBtn) {
     confirmDeleteBtn.addEventListener('click', async () => {
-      if (!currentBookIdToDelete) return;
+      if (!currentBookIdToDelete) {
+        console.error("No book ID to delete");
+        return;
+      }
+      
+      console.log("Attempting to delete book with ID:", currentBookIdToDelete);
       
       try {
         if (loadingContainer) {
           loadingContainer.style.display = "flex";
         }
         
-        const response = await fetch(`http://localhost:5000/api/books/${currentBookIdToDelete}`, {
+        const response = await fetch(`http://localhost:5500/api/books/${currentBookIdToDelete}`, {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
         });
         
+        // Try to get response data if available (might be empty for DELETE)
+        const responseData = await response.json().catch(() => null);
+        console.log("Server response for book deletion:", response.status, responseData);
+        
         if (!response.ok) {
-          throw new Error('Failed to delete book');
+          throw new Error(`Failed to delete book: ${response.status} ${response.statusText}`);
         }
         
         // Close modal
@@ -774,14 +846,16 @@ document.addEventListener("DOMContentLoaded", function (){
         }
         
         // Remove from cart if present
-        cartItems = cartItems.filter(item => item.id !== currentBookIdToDelete);
+        const bookIdToDelete = currentBookIdToDelete; // Store locally before resetting
+        cartItems = cartItems.filter(item => {
+          return item.id !== bookIdToDelete && item.book_id !== bookIdToDelete;
+        });
         updateCartUI();
         
         // Refresh book list
-        fetchBooks().then(({ books, stats }) => {
-          displayBooks(books);
-          updateStats(stats);
-        });
+        const { books, stats } = await fetchBooks();
+        displayBooks(books);
+        updateStats(stats);
         
         showNotification('Book deleted successfully!');
       } catch (error) {
@@ -791,28 +865,25 @@ document.addEventListener("DOMContentLoaded", function (){
         if (loadingContainer) {
           loadingContainer.style.display = "none";
         }
+        // Reset the current book ID to delete
         currentBookIdToDelete = null;
       }
     });
   }
   
-  // Global ESC key handler for all modals
+  // Close any modal with Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (addModalOverlay && addModalOverlay.classList.contains('active')) {
         addModalOverlay.classList.remove('active');
       }
-      
       if (editModalOverlay && editModalOverlay.classList.contains('active')) {
         editModalOverlay.classList.remove('active');
       }
-      
       if (deleteModalOverlay && deleteModalOverlay.classList.contains('active')) {
         deleteModalOverlay.classList.remove('active');
         currentBookIdToDelete = null;
       }
     }
   });
-  
-  updateCartUI();
 });
