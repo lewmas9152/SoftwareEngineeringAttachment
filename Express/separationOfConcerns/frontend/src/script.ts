@@ -708,7 +708,7 @@ function addToCart(bookId:string | number) {
       e.preventDefault();
 
       const formData = new FormData(addBookForm);
-      const bookData: Record<string, string> = {};
+      const bookData: Record<string, string | number> = {};
 
       formData.forEach((value, key) => {
         bookData[key] = value as string;
@@ -717,6 +717,11 @@ function addToCart(bookId:string | number) {
       // Add price field (random between $9.99 and $29.99)
       const price = (Math.random() * 20 + 9.99).toFixed(2);
       bookData['price'] = price;
+      bookData['created_by'] = 1;
+
+       // Convert numeric fields to numbers
+    if (bookData['year']) bookData['year'] = parseInt(bookData['year'] as string);
+    if (bookData['pages']) bookData['pages'] = parseInt(bookData['pages'] as string);
 
       try {
         if (loadingContainer) {
