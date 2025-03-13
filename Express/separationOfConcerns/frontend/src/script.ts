@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function (){
+document.addEventListener("DOMContentLoaded", function () {
   const booksContainer = document.getElementById("books-container");
   const genreFilter = document.getElementById("genre-filter");
   const yearFilter = document.getElementById("year-filter");
@@ -15,28 +15,28 @@ document.addEventListener("DOMContentLoaded", function (){
   cartTotalPrice.innerHTML = "<span>Total Price:</span><span>$0.00</span>";
   const checkoutBtn = document.querySelector(".checkout-btn");
   const cartFooter = document.querySelector(".cart-footer");
-  
+
   // CRUD related elements
   const addBookBtn = document.getElementById("add-book-btn");
   const addModalOverlay = document.getElementById("add-modal-overlay");
   const closeAddModal = document.getElementById("close-add-modal");
   const addBookForm = document.getElementById("add-book-form") as HTMLFormElement;
-  
+
   const editModalOverlay = document.getElementById("edit-modal-overlay");
   const closeEditModal = document.getElementById("close-edit-modal");
   const editBookForm = document.getElementById("edit-book-form") as HTMLFormElement;
-  
+
   const deleteModalOverlay = document.getElementById("delete-modal-overlay");
   const cancelDeleteBtn = document.getElementById("cancel-delete");
   const confirmDeleteBtn = document.getElementById("confirm-delete");
-  
+
   let currentBookIdToDelete: string | null = null;
-  
+
   if (cartFooter) {
     cartFooter.insertBefore(cartTotalPrice, checkoutBtn);
   }
-  
-  interface Book { 
+
+  interface Book {
     book_id?: string;
     id: string;
     title: string;
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function (){
       const response = await fetch(url);
       const data = await response.json();
       console.log("Fetched books:", data);
-      
+
       allBooks = data.books;
 
       if (loadingContainer) {
@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function (){
       return { books: [], stats: {} };
     }
   }
-  
+
   function filterAndSortBooks() {
     const searchTerm = searchInput.value.toLowerCase().trim();
     const genre = genreFilter ? (genreFilter as HTMLSelectElement).value : '';
@@ -104,18 +104,18 @@ document.addEventListener("DOMContentLoaded", function (){
       updateStats(stats);
     });
   }
-  
+
   fetchBooks().then(({ books, stats }) => {
     displayBooks(books);
     updateStats(stats);
   });
-  
+
   if (applyFiltersBtn) {
     applyFiltersBtn.addEventListener("click", filterAndSortBooks);
   }
-  
+
   if (searchInput) {
-    searchInput.addEventListener("keyup", function(event) {    
+    searchInput.addEventListener("keyup", function (event) {
       if (event.key === "Enter") {
         filterAndSortBooks();
       }
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function (){
 
   function displayBooks(books: Book[]) {
     if (booksContainer) booksContainer.innerHTML = "";
-    
+
     if (books.length === 0) {
       const noResults = document.createElement('div');
       noResults.className = 'no-results';
@@ -132,29 +132,29 @@ document.addEventListener("DOMContentLoaded", function (){
       if (booksContainer) booksContainer.appendChild(noResults);
       return;
     }
-    
+
     books.forEach((book) => {
       // Log each book to help debug ID issues
       console.log("Rendering book:", book.title, "ID:", book.id, "book_id:", book.book_id);
-      
+
       const bookCard = document.createElement("div");
       bookCard.className = "book-card";
-      
+
       const bookImage = document.createElement("div");
       bookImage.className = "book-image";
-      
+
       const image = document.createElement("img");
       image.className = "image";
       image.src = book.image;
       image.alt = book.title;
-      
+
       const bookCategory = document.createElement("div");
       bookCategory.className = "book-category";
       bookCategory.textContent = book.genre;
-      
+
       const bookActions = document.createElement("div");
       bookActions.className = "book-actions";
-      
+
       // IMPORTANT CHANGE: Use the same ID field for all operations (prefer book.id, fallback to book.book_id)
       const bookId = book.id || book.book_id;
 
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function (){
         console.error("Book ID is missing for book:", book.title);
         return; // Skip creating buttons if no ID is available
       }
-      
+
       const editBtn = document.createElement("button");
       editBtn.className = "action-btn edit-btn";
       editBtn.setAttribute("data-id", bookId);
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function (){
         e.stopPropagation();
         openEditModal(book);
       });
-      
+
       const deleteBtn = document.createElement("button");
       deleteBtn.className = "action-btn delete-btn";
       deleteBtn.setAttribute("data-id", bookId);
@@ -182,76 +182,78 @@ document.addEventListener("DOMContentLoaded", function (){
         console.log("Opening delete modal for book:", book.title, "with ID:", bookId);
         openDeleteModal(bookId);
       });
-      
+
       bookActions.appendChild(editBtn);
       bookActions.appendChild(deleteBtn);
-      
+
       bookImage.appendChild(image);
       bookImage.appendChild(bookCategory);
       bookImage.appendChild(bookActions);
-    
+
       const bookInfo = document.createElement("div");
       bookInfo.className = "book-info";
-      
+
       const bookTitle = document.createElement("h3");
       bookTitle.className = "book-title";
       bookTitle.textContent = book.title;
-      
+
       const bookAuthor = document.createElement("p");
       bookAuthor.className = "book-author";
       bookAuthor.textContent = book.author;
-      
+
       const bookMeta = document.createElement("div");
       bookMeta.className = "book-meta";
-      
+
       const year = document.createElement("span");
       year.id = "year";
       year.textContent = book.year;
-      
+
       const pages = document.createElement("span");
       pages.id = "pages";
       pages.textContent = `${book.pages} pages`;
-      
+
       const price = document.createElement("span");
       price.id = "price";
       price.textContent = `$${Number(book.price).toFixed(2)}`;
       price.style.color = "var(--primary)";
       price.style.fontWeight = "bold";
-      
+
       bookMeta.appendChild(year);
       bookMeta.appendChild(pages);
       bookMeta.appendChild(price);
-      
+
       const description = document.createElement("p");
       description.className = "book-description";
       description.textContent = book.description;
-      
+
       const bookPublisher = document.createElement("p");
       bookPublisher.className = "book-publisher";
       bookPublisher.textContent = book.publisher;
-    
+
       const bookIdElement = document.createElement("p");
       bookIdElement.className = 'id-book';
       bookIdElement.textContent = bookId;
       bookIdElement.style.display = 'none';
-    
+
       const buyBook = document.createElement("button");
       buyBook.className = "buy-book";
       buyBook.textContent = `Buy Now • $${Number(book.price).toFixed(2)}`;
-      
-      buyBook.addEventListener('click', function(e) {
+
+      buyBook.addEventListener('click', function (e) {
         e.stopPropagation();
         const target = e.target as HTMLElement;
+        console.log("Buy book clicked:", target);
         let bookId: string | null = null;
         if (target && target.parentNode) {
           const idElement = target.parentNode.querySelector('.id-book') as HTMLElement;
           bookId = idElement ? idElement.textContent : null;
+          console.log("Book ID for purchase:", bookId);
         }
         if (bookId) {
-          addToCart(bookId, books);
+          addToCart(bookId);
         }
       });
-      
+
       bookInfo.appendChild(bookTitle);
       bookInfo.appendChild(bookAuthor);
       bookInfo.appendChild(bookMeta);
@@ -259,72 +261,87 @@ document.addEventListener("DOMContentLoaded", function (){
       bookInfo.appendChild(bookPublisher);
       bookInfo.appendChild(bookIdElement);
       bookInfo.appendChild(buyBook);
-      
+
       bookCard.appendChild(bookImage);
       bookCard.appendChild(bookInfo);
-      
+
       bookCard.addEventListener('click', () => {
         showBookModal(book);
       });
-      
+
       if (booksContainer) booksContainer.appendChild(bookCard);
     });
   }
 
-  function updateStats(stats: { 
-    totalBooks: number, 
-    avgPages: number, 
-    oldestBook: number | null, 
-    uniqueGenres: number 
+  function updateStats(stats: {
+    totalBooks: number,
+    avgPages: number,
+    oldestBook: number | null,
+    uniqueGenres: number
   }) {
     const totalBooksElement = document.getElementById("total-books");
     if (totalBooksElement) {
       totalBooksElement.textContent = stats.totalBooks.toString();
     }
-    
+
     const avgPagesElement = document.getElementById("avg-pages");
     if (avgPagesElement) {
       avgPagesElement.textContent = stats.avgPages.toString();
     }
-    
+
     const oldestBookElement = document.getElementById("oldest-book");
     if (oldestBookElement && stats.oldestBook !== null) {
-      oldestBookElement.textContent = 
+      oldestBookElement.textContent =
         stats.oldestBook < 0 ? `${Math.abs(stats.oldestBook)} BCE` : stats.oldestBook.toString();
     }
-    
+
     const genresCountElement = document.getElementById("genres-count");
     if (genresCountElement) {
       genresCountElement.textContent = stats.uniqueGenres.toString();
     }
   }
+
+  // Modified addToCart function to handle type conversion
+function addToCart(bookId:string | number) {
+  console.log("addToCart called with ID:", bookId);
   
-  function addToCart(bookId: string, booksArray: Book[]) {
-    const bookToAdd = booksArray.find((book: Book) => book.id === bookId || book.book_id === bookId);
-    
-    if (!bookToAdd) {
-      console.error("Could not find book with ID:", bookId);
-      return;
-    }
-    
-    const existingItemIndex = cartItems.findIndex(item => item.id === bookId || item.book_id === bookId);
-    
-    if (existingItemIndex !== -1) {
-      cartItems[existingItemIndex].quantity += 1;
-    } else {
-      cartItems.push({
-        ...bookToAdd,
-        quantity: 1
-      });
-    }
-    
-    updateCartUI();
-    showNotification(`Added "${bookToAdd.title}" to cart`);
+  
+  // Try to find the book using both string and number comparisons
+  const bookToAdd = allBooks.find((book) => {
+    const bookObjectId = book.id || book.book_id;
+    return bookObjectId == bookId; // Use loose equality to match across types
+  });
+  
+  console.log("Book found for cart:", bookToAdd);
+  
+  if (!bookToAdd) {
+    console.error("Could not find book with ID:", bookId);
+    // Debug: Log all book IDs to see what's available
+    console.log("Available book IDs:", allBooks.map(book => book.id || book.book_id));
+    return;
   }
   
+  const existingItemIndex = cartItems.findIndex(item => {
+    const itemId = item.id || item.book_id;
+    return itemId == bookId; // Use loose equality
+  });
+  
+  if (existingItemIndex !== -1) {
+    cartItems[existingItemIndex].quantity += 1;
+  } else {
+    cartItems.push({
+      ...bookToAdd,
+      quantity: 1
+    });
+  }
+  
+  updateCartUI();
+  showNotification(`Added "${bookToAdd.title}" to cart`);
+}
+
   function updateCartUI() {
     if (!cartCountElement || !cartTotalItems || !cartTotalPrice) return;
-    
+
     const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
     if (cartCountElement) {
       cartCountElement.textContent = totalItems.toString();
@@ -332,25 +349,25 @@ document.addEventListener("DOMContentLoaded", function (){
     if (cartTotalItems) {
       cartTotalItems.textContent = `${totalItems} ${totalItems === 1 ? 'book' : 'books'}`;
     }
-    
+
     const totalPrice = cartItems.reduce((total, item) => {
       return total + (item.price * item.quantity);
     }, 0);
-    
+
     const priceElement = cartTotalPrice.querySelector('span:last-child');
     if (priceElement) {
       priceElement.textContent = `$${totalPrice.toFixed(2)}`;
     }
-    
+
     renderCartItems();
   }
-  
+
   function renderCartItems() {
     if (!cartItemsContainer || !cartEmptyMessage || !checkoutBtn) return;
-    
+
     const itemElements = cartItemsContainer.querySelectorAll('.cart-item');
     itemElements.forEach(item => item.remove());
-    
+
     if (cartItems.length === 0) {
       (cartEmptyMessage as HTMLElement).style.display = 'block';
       (checkoutBtn as HTMLButtonElement).disabled = true;
@@ -359,14 +376,14 @@ document.addEventListener("DOMContentLoaded", function (){
       (cartEmptyMessage as HTMLElement).style.display = 'none';
       (checkoutBtn as HTMLButtonElement).disabled = false;
     }
-    
+
     cartItems.forEach(item => {
       const cartItem = document.createElement('div');
       cartItem.className = 'cart-item';
-      
+
       // Use consistent ID approach
       const itemId = item.id || item.book_id;
-      
+
       cartItem.innerHTML = `
         <div class="cart-item-image">
           <img src="${item.image}" alt="${item.title}">
@@ -374,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function (){
         <div class="cart-item-details">
           <h3 class="cart-item-title">${item.title}</h3>
           <p class="cart-item-author">${item.author}</p>
-          <p class="cart-item-price">$${item.price.toFixed(2)} each</p>
+          <p class="cart-item-price">$${Number(item.price).toFixed(2)} each</p>
           <div class="cart-item-controls">
             <div class="quantity-controls">
               <button class="quantity-btn decrease-quantity" data-id="${itemId}">
@@ -395,34 +412,34 @@ document.addEventListener("DOMContentLoaded", function (){
       `;
       cartItemsContainer.appendChild(cartItem);
     });
-    
+
     addCartItemEventListeners();
   }
-  
+
   function addCartItemEventListeners() {
     const increaseButtons = document.querySelectorAll('.increase-quantity');
     increaseButtons.forEach(button => {
-      button.addEventListener('click', function(this: HTMLElement) {
+      button.addEventListener('click', function (this: HTMLElement) {
         const id = this.getAttribute('data-id');
         if (id) {
           incrementCartItem(id);
         }
       });
     });
-    
+
     const decreaseButtons = document.querySelectorAll('.decrease-quantity');
     decreaseButtons.forEach(button => {
-      button.addEventListener('click', function(this: HTMLElement) {
+      button.addEventListener('click', function (this: HTMLElement) {
         const id = this.getAttribute('data-id');
         if (id) {
           decrementCartItem(id);
         }
       });
     });
-    
+
     const removeButtons = document.querySelectorAll('.remove-item');
     removeButtons.forEach(button => {
-      button.addEventListener('click', function(this: HTMLElement) {
+      button.addEventListener('click', function (this: HTMLElement) {
         const id = this.getAttribute('data-id');
         if (id) {
           removeCartItem(id);
@@ -430,17 +447,21 @@ document.addEventListener("DOMContentLoaded", function (){
       });
     });
   }
-  
+
   function incrementCartItem(id: string) {
-    const itemIndex = cartItems.findIndex(item => item.id === id || item.book_id === id);
+    const itemIndex = cartItems.findIndex(item => 
+      String(item.id) === String(id) || String(item.book_id) === String(id)
+    );
     if (itemIndex !== -1) {
       cartItems[itemIndex].quantity += 1;
       updateCartUI();
     }
   }
-  
+
   function decrementCartItem(id: string) {
-    const itemIndex = cartItems.findIndex(item => item.id === id || item.book_id === id);
+    const itemIndex = cartItems.findIndex(item => 
+      String(item.id) === String(id) || String(item.book_id) === String(id)
+    );
     if (itemIndex !== -1) {
       if (cartItems[itemIndex].quantity > 1) {
         cartItems[itemIndex].quantity -= 1;
@@ -453,11 +474,13 @@ document.addEventListener("DOMContentLoaded", function (){
   }
   
   function removeCartItem(id: string) {
-    cartItems = cartItems.filter(item => item.id !== id && item.book_id !== id);
+    cartItems = cartItems.filter(item => 
+      String(item.id) !== String(id) && String(item.book_id) !== String(id)
+    );
     updateCartUI();
     showNotification("Item removed from cart");
   }
-  
+
   function showNotification(message: string) {
     const notification = document.createElement('div');
     notification.className = 'notification';
@@ -476,24 +499,24 @@ document.addEventListener("DOMContentLoaded", function (){
       transform: translateY(10px);
       transition: opacity 0.3s, transform 0.3s;
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
       notification.style.opacity = '1';
       notification.style.transform = 'translateY(0)';
     }, 10);
-    
+
     setTimeout(() => {
       notification.style.opacity = '0';
       notification.style.transform = 'translateY(10px)';
-      
+
       setTimeout(() => {
         document.body.removeChild(notification);
       }, 300);
     }, 3000);
   }
-  
+
   function showBookModal(book: Book) {
     const modal = document.createElement('div');
     modal.className = 'book-modal';
@@ -511,99 +534,99 @@ document.addEventListener("DOMContentLoaded", function (){
         <img src="${book.image}" alt="${book.title}">
       </div>
     `;
-  
+
     document.body.appendChild(modal);
-  
+
     const closeButton = modal.querySelector('.close-button');
     if (closeButton) {
       closeButton.addEventListener('click', () => {
         document.body.removeChild(modal);
       });
     }
-  
+
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         document.body.removeChild(modal);
       }
     });
   }
-  
+
   const cartButton = document.getElementById('cart-button');
   const cartOverlay = document.getElementById('cart-overlay');
   const cartModal = document.querySelector('.cart-modal');
   const closeCart = document.getElementById('close-cart');
-  
+
   if (cartButton && cartOverlay && closeCart && cartModal) {
     cartButton.addEventListener('click', () => {
       cartOverlay.classList.add('active');
       cartModal.classList.add('active');
     });
-    
+
     const closeCartModal = () => {
       cartOverlay.classList.remove('active');
       cartModal.classList.remove('active');
     };
-    
+
     closeCart.addEventListener('click', closeCartModal);
     cartOverlay.addEventListener('click', (e) => {
       if (e.target === cartOverlay) {
         closeCartModal();
       }
     });
-    
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && cartOverlay.classList.contains('active')) {
         closeCartModal();
       }
     });
   }
-  
+
   if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', function() {
+    checkoutBtn.addEventListener('click', function () {
       if (cartItems.length > 0) {
         const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
         alert(`Proceeding to checkout!\nTotal: $${totalPrice.toFixed(2)}\nNumber of books: ${cartItems.reduce((count, item) => count + item.quantity, 0)}`);
       }
     });
   }
-  
+
   // CRUD Functionality
-  
+
   // Add Book Modal
   if (addBookBtn && addModalOverlay) {
     addBookBtn.addEventListener('click', () => {
       openAddModal();
     });
   }
-  
+
   function openAddModal() {
     if (addModalOverlay) {
       addModalOverlay.classList.add('active');
-      
+
       // Reset the form
       if (addBookForm) {
         addBookForm.reset();
       }
     }
   }
-  
+
   if (closeAddModal && addModalOverlay) {
     closeAddModal.addEventListener('click', () => {
       addModalOverlay.classList.remove('active');
     });
-    
+
     addModalOverlay.addEventListener('click', (e) => {
       if (e.target === addModalOverlay) {
         addModalOverlay.classList.remove('active');
       }
     });
   }
-  
+
   // Edit Book Modal
   function openEditModal(book: Book) {
     if (editModalOverlay && book) {
       editModalOverlay.classList.add('active');
-      
+
       // Get the correct ID field (either book_id or id)
       const bookId = book.id || book.book_id;
 
@@ -611,15 +634,15 @@ document.addEventListener("DOMContentLoaded", function (){
         console.error("Book ID is missing for book:", book.title);
         return; // Skip creating buttons if no ID is available
       }
-      
+
       // Debug log to verify we have a valid book ID
       console.log("Opening edit modal for book:", book.title, "with ID:", bookId);
-      
+
       // Store the book ID directly in a data attribute on the form itself
       if (editBookForm) {
         editBookForm.setAttribute('data-book-id', bookId);
       }
-      
+
       const editTitle = document.getElementById('edit-title') as HTMLInputElement;
       const editAuthor = document.getElementById('edit-author') as HTMLInputElement;
       const editYear = document.getElementById('edit-year') as HTMLInputElement;
@@ -629,7 +652,7 @@ document.addEventListener("DOMContentLoaded", function (){
       const editPublisher = document.getElementById('edit-publisher') as HTMLInputElement;
       const editImage = document.getElementById('edit-image') as HTMLInputElement;
       const editPrice = document.getElementById('edit-price') as HTMLInputElement;
-      
+
       if (editTitle) editTitle.value = book.title;
       if (editAuthor) editAuthor.value = book.author;
       if (editYear) editYear.value = book.year;
@@ -641,19 +664,19 @@ document.addEventListener("DOMContentLoaded", function (){
       if (editPrice) editPrice.value = book.price.toString();
     }
   }
-  
+
   if (closeEditModal && editModalOverlay) {
     closeEditModal.addEventListener('click', () => {
       editModalOverlay.classList.remove('active');
     });
-    
+
     editModalOverlay.addEventListener('click', (e) => {
       if (e.target === editModalOverlay) {
         editModalOverlay.classList.remove('active');
       }
     });
   }
-  
+
   // Delete Confirmation Modal
   function openDeleteModal(bookId: string) {
     if (deleteModalOverlay) {
@@ -662,14 +685,14 @@ document.addEventListener("DOMContentLoaded", function (){
       console.log("Delete modal opened for book ID:", bookId);
     }
   }
-  
+
   if (cancelDeleteBtn && deleteModalOverlay) {
     cancelDeleteBtn.addEventListener('click', () => {
       deleteModalOverlay.classList.remove('active');
       currentBookIdToDelete = null;
     });
   }
-  
+
   if (deleteModalOverlay) {
     deleteModalOverlay.addEventListener('click', (e) => {
       if (e.target === deleteModalOverlay) {
@@ -678,30 +701,30 @@ document.addEventListener("DOMContentLoaded", function (){
       }
     });
   }
-  
+
   // Form Submissions
   if (addBookForm) {
     addBookForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const formData = new FormData(addBookForm);
       const bookData: Record<string, string> = {};
-      
+
       formData.forEach((value, key) => {
         bookData[key] = value as string;
       });
-      
+
       // Add price field (random between $9.99 and $29.99)
       const price = (Math.random() * 20 + 9.99).toFixed(2);
       bookData['price'] = price;
-      
+
       try {
         if (loadingContainer) {
           loadingContainer.style.display = "flex";
         }
-        
+
         console.log("Sending book data to server:", bookData);
-        
+
         const response = await fetch('http://localhost:5500/api/books', {
           method: 'POST',
           headers: {
@@ -709,25 +732,25 @@ document.addEventListener("DOMContentLoaded", function (){
           },
           body: JSON.stringify(bookData),
         });
-        
+
         const responseData = await response.json().catch(() => null);
         console.log("Server response for book creation:", responseData);
-        
+
         if (!response.ok) {
           throw new Error(`Failed to add book: ${response.status} ${response.statusText}`);
         }
-        
+
         // Close modal and refresh books
         if (addModalOverlay) {
           addModalOverlay.classList.remove('active');
         }
-        
+
         // Refresh book list
         fetchBooks().then(({ books, stats }) => {
           displayBooks(books);
           updateStats(stats);
         });
-        
+
         showNotification('Book added successfully!');
       } catch (error) {
         console.error("Error adding book:", error);
@@ -739,42 +762,42 @@ document.addEventListener("DOMContentLoaded", function (){
       }
     });
   }
-  
+
   if (editBookForm) {
     editBookForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       // Get the book ID from the data attribute we set on the form
       const bookId = editBookForm.getAttribute('data-book-id');
-      
+
       // Debug log to check the ID before submission
       console.log("Submitting edit form for book ID:", bookId);
-      
+
       // Add validation for bookId
       if (!bookId) {
         console.error("Book ID is missing or undefined");
         showNotification('Cannot update book: Book ID is missing');
         return; // Exit early if no bookId
       }
-      
+
       const formData = new FormData(editBookForm);
       const bookData: Record<string, string> = {};
-      
+
       formData.forEach((value, key) => {
         // Make sure we're not including any ID fields in the data
         if (key !== 'id' && key !== 'book_id' && key !== 'edit-book-id') {
           bookData[key] = value as string;
         }
       });
-      
+
       // Log form data for debugging
       console.log("Form data to be sent for update:", bookData);
-      
+
       try {
         if (loadingContainer) {
           loadingContainer.style.display = "flex";
         }
-        
+
         const response = await fetch(`http://localhost:5500/api/books/${bookId}`, {
           method: 'PUT',
           headers: {
@@ -782,23 +805,23 @@ document.addEventListener("DOMContentLoaded", function (){
           },
           body: JSON.stringify(bookData),
         });
-        
+
         const responseData = await response.json().catch(() => null);
         console.log("Server response for book update:", responseData);
-        
+
         if (!response.ok) {
           throw new Error(`Failed to update book: ${response.status} ${response.statusText}`);
         }
-        
+
         // Close modal and refresh books
         if (editModalOverlay) {
           editModalOverlay.classList.remove('active');
         }
-        
-        const {books, stats} = await fetchBooks();
+
+        const { books, stats } = await fetchBooks();
         displayBooks(books);
         updateStats(stats);
-        
+
         showNotification('Book updated successfully!');
       } catch (error) {
         console.error("Error updating book:", error);
@@ -810,53 +833,53 @@ document.addEventListener("DOMContentLoaded", function (){
       }
     });
   }
-  
+
   if (confirmDeleteBtn) {
     confirmDeleteBtn.addEventListener('click', async () => {
       if (!currentBookIdToDelete) {
         console.error("No book ID to delete");
         return;
       }
-      
+
       console.log("Attempting to delete book with ID:", currentBookIdToDelete);
-      
+
       try {
         if (loadingContainer) {
           loadingContainer.style.display = "flex";
         }
-        
+
         const response = await fetch(`http://localhost:5500/api/books/${currentBookIdToDelete}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
           }
         });
-        
+
         // Try to get response data if available (might be empty for DELETE)
         const responseData = await response.json().catch(() => null);
         console.log("Server response for book deletion:", response.status, responseData);
-        
+
         if (!response.ok) {
           throw new Error(`Failed to delete book: ${response.status} ${response.statusText}`);
         }
-        
+
         // Close modal
         if (deleteModalOverlay) {
           deleteModalOverlay.classList.remove('active');
         }
-        
+
         // Remove from cart if present
         const bookIdToDelete = currentBookIdToDelete; // Store locally before resetting
         cartItems = cartItems.filter(item => {
           return item.id !== bookIdToDelete && item.book_id !== bookIdToDelete;
         });
         updateCartUI();
-        
+
         // Refresh book list
         const { books, stats } = await fetchBooks();
         displayBooks(books);
         updateStats(stats);
-        
+
         showNotification('Book deleted successfully!');
       } catch (error) {
         console.error("Error deleting book:", error);
@@ -870,7 +893,7 @@ document.addEventListener("DOMContentLoaded", function (){
       }
     });
   }
-  
+
   // Close any modal with Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
