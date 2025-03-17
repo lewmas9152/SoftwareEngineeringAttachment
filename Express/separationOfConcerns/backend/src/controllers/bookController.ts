@@ -158,7 +158,6 @@ export const deleteBook = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Book not found" });
       return;
     }
-    
     await pool.query("DELETE FROM public.books WHERE book_id = $1", [id]);
     res.json({ message: "Book deleted successfully" });
   } catch (error) {
